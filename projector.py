@@ -280,7 +280,7 @@ def main():
     parser.add_argument('--save-video',  help='Save an mp4 video of optimization progress (default: true)', type=_str_to_bool, default=True)
     parser.add_argument('--seed',        help='Random seed', type=int, default=303)
     parser.add_argument('--outdir',      help='Where to save the output images', required=True, metavar='DIR')
-    parser.add_argument('--num_steps',      help='Number of steps', required=False, default=1000)
+    parser.add_argument('--num_steps',      help='Number of steps', type=int, required=False, default=1000)
     project(**vars(parser.parse_args()))
 
 #----------------------------------------------------------------------------
