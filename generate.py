@@ -380,6 +380,36 @@ def generate_latent_walk(network_pkl, truncation_psi, outdir, walk_type, frames,
             seed_out = 'z-' + walk_type + '-seed' +str(start_seed)
         generate_latent_images(points, truncation_psi, outdir, save_vector,'frame', seed_out, framerate)
 
+
+def interpolation(network_pkl, seeds, number_of_steps, outdir):
+    """
+    Takes 4 seeds corresponding to upper-left, upper-right, lower-left, lower-right corners
+    """
+
+    global _G, _D, Gs, noise_vars
+    tflib.init_tf()
+
+    print('Loading networks from "%s"...' % network_pkl)
+    with dnnlib.util.open_url(network_pkl) as fp:
+        _G, _D, Gs = pickle.load(fp)
+
+    os.makedirs(outdir, exist_ok=True)
+
+    # Interpolate between 4 seeds
+    zs = generate_zs_from_seeds(seeds,Gs)
+    for i in range(number_of_steps+1):
+        print(f'Row {i}.')
+        points = []
+        for j in range(number_of_steps+1):
+            w0 = (1 - i) * (1 - j)
+            w1 = (1 - i) * j
+            w2 = i * (1 - j)
+            w3 = i * j
+            points.append((w0 * zs[0] + w1 * zs[1] + w2 * zs[2] + w3 * zs[3]) / (w0 + w1 + w2 + w3))
+
+        generate_latent_images(points, 1, outdir, False, 'frame', f'interpolation-{i}-', 4)
+
+
 #----------------------------------------------------------------------------
 
 def generate_neighbors(network_pkl, seeds, npys, diameter, truncation_psi, num_samples, save_vector, outdir):
@@ -706,6 +736,13 @@ def main():
     parser_lerp_video.add_argument('--fps', type=int, help='FPS of generated video (default: %(default)s)', default=30, dest='mp4_fps')
     parser_lerp_video.add_argument('--outdir', help='Root directory for run results (default: %(default)s)', default='out', metavar='DIR')
     parser_lerp_video.set_defaults(func=lerp_video)
+
+    parser_interpolation = subparsers.add_parset('interpolation', help='Interpolation between 4 images')
+    parser_interpolation.add_argument('--network', help='Path to network pickle filename', dest='network_pkl', required=True)
+    parser_interpolation.add_argument('--seeds', type=_parse_num_range_ext, help='List of 4 random seeds', dest='seeds', required=True)
+    parser_interpolation.add_argument('--number_of_steps', type=int, help='Number of steps.', default=10)
+    parser_interpolation.add_argument('--outdir', help='Root directory for run results (default: %(default)s)', default='out', metavar='DIR')
+    parser_interpolation.set_defaults(func=interpolation)
 
     args = parser.parse_args()
     kwargs = vars(args)
