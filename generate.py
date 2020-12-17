@@ -737,7 +737,7 @@ def main():
     parser_lerp_video.add_argument('--outdir', help='Root directory for run results (default: %(default)s)', default='out', metavar='DIR')
     parser_lerp_video.set_defaults(func=lerp_video)
 
-    parser_interpolation = subparsers.add_parset('interpolation', help='Interpolation between 4 images')
+    parser_interpolation = subparsers.add_parser('interpolation', help='Interpolation between 4 images')
     parser_interpolation.add_argument('--network', help='Path to network pickle filename', dest='network_pkl', required=True)
     parser_interpolation.add_argument('--seeds', type=_parse_num_range_ext, help='List of 4 random seeds', dest='seeds', required=True)
     parser_interpolation.add_argument('--number_of_steps', type=int, help='Number of steps.', default=10)
