@@ -394,12 +394,12 @@ def interpolation(network_pkl, seeds, number_of_steps, outdir):
         _G, _D, Gs = pickle.load(fp)
 
     os.makedirs(outdir, exist_ok=True)
+    os.makedirs(outdir + "/frames", exist_ok=True)
 
     # Interpolate between 4 seeds
     zs = generate_zs_from_seeds(seeds,Gs)
+    points = []
     for i in range(number_of_steps+1):
-        print(f'Row {i}.')
-        points = []
         for j in range(number_of_steps+1):
             w0 = (1 - i) * (1 - j)
             w1 = (1 - i) * j
@@ -407,7 +407,7 @@ def interpolation(network_pkl, seeds, number_of_steps, outdir):
             w3 = i * j
             points.append((w0 * zs[0] + w1 * zs[1] + w2 * zs[2] + w3 * zs[3]) / (w0 + w1 + w2 + w3))
 
-        generate_latent_images(points, 1, outdir, False, 'frame', f'interpolation-{i}-', 4)
+    generate_latent_images(points, 1, outdir, False, 'frame', 'interpolation-', 8)
 
 
 #----------------------------------------------------------------------------
