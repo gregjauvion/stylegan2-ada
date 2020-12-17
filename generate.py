@@ -401,6 +401,7 @@ def interpolation(network_pkl, seeds, number_of_steps, outdir):
     points = []
     for i in range(number_of_steps+1):
         for j in range(number_of_steps+1):
+            i, j = i/number_of_steps, j/number_of_steps
             w0 = (1 - i) * (1 - j)
             w1 = (1 - i) * j
             w2 = i * (1 - j)
