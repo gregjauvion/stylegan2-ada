@@ -381,7 +381,7 @@ def generate_latent_walk(network_pkl, truncation_psi, outdir, walk_type, frames,
         generate_latent_images(points, truncation_psi, outdir, save_vector,'frame', seed_out, framerate)
 
 
-def interpolation(network_pkl, seeds, trunc, number_of_steps, outdir):
+def interpolation(network_pkl, seeds, truncation_psi, number_of_steps, outdir):
     """
     Takes 4 seeds corresponding to upper-left, upper-right, lower-left, lower-right corners
     """
@@ -409,7 +409,7 @@ def interpolation(network_pkl, seeds, trunc, number_of_steps, outdir):
             w3 = i * j
             points.append((w0 * zs[0] + w1 * zs[1] + w2 * zs[2] + w3 * zs[3]) / (w0 + w1 + w2 + w3))
 
-    generate_latent_images(points, trunc, outdir, False, 'frame', 'interpolation-', 8)
+    generate_latent_images(points, truncation_psi, outdir, False, 'frame', 'interpolation-', 8)
 
 
 #----------------------------------------------------------------------------
