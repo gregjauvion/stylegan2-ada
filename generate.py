@@ -381,7 +381,7 @@ def generate_latent_walk(network_pkl, truncation_psi, outdir, walk_type, frames,
         generate_latent_images(points, truncation_psi, outdir, save_vector,'frame', seed_out, framerate)
 
 
-def interpolation(network_pkl, seeds, number_of_steps, outdir):
+def interpolation(network_pkl, seeds, trunc, number_of_steps, outdir):
     """
     Takes 4 seeds corresponding to upper-left, upper-right, lower-left, lower-right corners
     """
@@ -409,7 +409,7 @@ def interpolation(network_pkl, seeds, number_of_steps, outdir):
             w3 = i * j
             points.append((w0 * zs[0] + w1 * zs[1] + w2 * zs[2] + w3 * zs[3]) / (w0 + w1 + w2 + w3))
 
-    generate_latent_images(points, 1, outdir, False, 'frame', 'interpolation-', 8)
+    generate_latent_images(points, trunc, outdir, False, 'frame', 'interpolation-', 8)
 
 
 #----------------------------------------------------------------------------
@@ -742,6 +742,7 @@ def main():
     parser_interpolation = subparsers.add_parser('interpolation', help='Interpolation between 4 images')
     parser_interpolation.add_argument('--network', help='Path to network pickle filename', dest='network_pkl', required=True)
     parser_interpolation.add_argument('--seeds', type=_parse_num_range_ext, help='List of 4 random seeds', dest='seeds', required=True)
+    parser_interpolation.add_argument('--trunc', type=float, help='Truncation psi (default: %(default)s)', default=1.0, dest='truncation_psi')
     parser_interpolation.add_argument('--number_of_steps', type=int, help='Number of steps.', default=10)
     parser_interpolation.add_argument('--outdir', help='Root directory for run results (default: %(default)s)', default='out', metavar='DIR')
     parser_interpolation.set_defaults(func=interpolation)
